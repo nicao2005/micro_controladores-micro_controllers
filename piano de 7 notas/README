@@ -1,0 +1,4 @@
+## (pt-br) código que funciona como um piano, selecionando cada nota através dos botões. as notas que
+## estão presente são: DÓ, RÉ, MI, FÁ, SOL, LÁ, SI e são ouvidas conectadas em um auto-falante.
+## (en-us) the code is basically a piano that you select the note that you want in the buttons. the 
+## notes that we can play are: DÓ, RÉ, MI, FÁ, SOL, LÁ, SI and you need a speaker to reproduce them.

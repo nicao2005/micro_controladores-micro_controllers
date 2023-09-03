@@ -1,0 +1,52 @@
+#include "stm32f4xx.h"
+
+int main(void)
+{
+	RCC->AHB1ENR=0x00000087; // habilitando clock das GPIO
+	RCC->APB2ENR|=0x40000; // habilitando clock do timer 11
+
+	GPIOB->MODER|=0x01; // PB0 é alto-falante
+	GPIOC->MODER|=0x00; // PC0, PC1, PC2, PC3, PB3, PB4 e PB5 são botões
+
+	TIM11->ARR=1000-1;
+	TIM11->CR1|=0X01; // ligando timer 11
+
+  while (1)
+  {
+	  int aux=0;
+
+	  if((GPIOC->IDR & 0xF)==0x01){ // PC0
+		  TIM11->PSC=60.8762; // DÓ
+	  }
+	  else if((GPIOC->IDR & 0xF)==0x02){ // PC1
+		  TIM11->PSC=53.9179; // RÉ
+	  }
+	  else if((GPIOC->IDR & 0xF)==0x04){ // PC2
+		  TIM11->PSC=47.8967; // MI
+	  	  }
+	  else if((GPIOC->IDR & 0xF)==0x08){ // PC3
+		  TIM11->PSC=45.1626; // FÁ
+	  	  }
+	  else if((GPIOB->IDR & 0x38)==0x08){ // PB3
+	  		TIM11->PSC=39.8629 ; // SOL
+	  	  }
+	  else if((GPIOB->IDR & 0x38)==0x10){ // PB4
+	  		TIM11->PSC=35.7125; // LA
+	  	  }
+	  else if((GPIOB->IDR & 0x38)==0x20){ // PB5
+	  		TIM11->PSC=31.8094; // SI
+	  	  }
+	  else
+		  aux++;
+
+
+	  if(TIM11->SR & 0x01){ // testando se o timer contou
+	  			TIM11->SR &=~(0x01); // limpando o flag do timer 11
+
+	  			if(aux==1)
+	  				GPIOB->ODR=0x00;
+	  			else
+	  				GPIOB->ODR^=0x01;
+	  }
+  }
+}

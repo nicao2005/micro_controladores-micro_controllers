@@ -1,0 +1,103 @@
+#include "stm32f4xx.h"
+
+// TODOS OS DISPLAYS UTILIZADOS SÃO ANODO!!!!!
+int nome[11]={0xAB, 0xF9, 0xC6, 0xA3, 0x47, 0x88, 0x92, 0xF7, 0xF7, 0xF7, 0xF7};
+// exibicao: n I c o L A S _ _ _
+
+int controle=0;
+int d0=-1, d1=0, d2=1, d3=2;
+
+
+void TIM1_UP_TIM10_IRQHandler(void){
+    controle++;
+    if(controle>3)
+    controle=0;
+
+    GPIOC->ODR &=~0x7F; // limpa sete bits GPIOC
+    GPIOB->ODR|=0x0F; // desligando todos os displays
+    // os displays ligam em 0 e desligam em 1
+
+    switch(controle){
+    case 0:
+    GPIOC->ODR|=nome[d3]; // move a info para display 0
+    GPIOB->ODR &=~0x07; // ligando o display 0
+    break;
+
+    case 1:
+    GPIOC->ODR|=nome[d2]; // move a info para display 1
+    GPIOB->ODR &=~0x0B; // ligando o display 1
+    break;
+
+    case 2:
+    GPIOC->ODR|=nome[d1]; // move a info para display 2
+    GPIOB->ODR &=~0x0D; // ligando o display 2
+    break;
+
+    case 3:
+    GPIOC->ODR|=nome[d0]; // move a info para display 3
+    GPIOB->ODR &=~0x0E; // ligando o display 3
+    break;
+    }
+    TIM10->SR &=~0x01;
+}
+
+
+void TIM1_TRG_COM_TIM11_IRQHandler(void){
+	d0++;
+	d1++;
+	d2++;
+	d3++;
+
+	if(d0>10)
+		d0=0;
+	if(d1>10)
+		d1=0;
+	if(d2>10)
+		d2=0;
+	if(d3>10)
+		d3=0;
+
+    TIM11->SR &=~0x01;
+}
+
+
+int main(void){
+/*
+* PC0 - A
+* PC1 - B
+* PC2 - C
+* PC3 - D
+* PC4 - E
+* PC5 - F
+* PC6 - G
+* PB0 - PB3 controlam os anodos
+*/
+
+    RCC->AHB1ENR=0x0087;
+    GPIOB->MODER=0x0055;
+    GPIOC->MODER=0x055555;
+
+    RCC->APB2ENR|=1<<17; // habilita o clock do timer 10
+    TIM10->PSC=25000-1;
+    TIM10->ARR=2-1;
+    TIM10->CR1|=0x01;
+    TIM10->DIER|=0x01; // habilita interrupçao do timer 10
+
+    NVIC_SetPriority(TIM1_UP_TIM10_IRQn, 4);
+    NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
+
+
+    RCC->APB2ENR|=1<<18; // habilita o clock do timer 11
+    TIM11->PSC=16000-1;
+    TIM11->ARR=600-1;
+    TIM11->CR1|=0x01; // ligando o timer 11
+    TIM11->DIER|=0x01; // habilita interrupçao do timer 10
+
+    NVIC_SetPriority(TIM1_TRG_COM_TIM11_IRQn, 5);
+    NVIC_EnableIRQ(TIM1_TRG_COM_TIM11_IRQn);
+
+ while (1)
+ {
+
+ }
+}

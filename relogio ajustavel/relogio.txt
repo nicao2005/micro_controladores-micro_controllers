@@ -71,7 +71,7 @@ void TIM1_TRG_COM_TIM11_IRQHandler(void){
 	}
 	if(hora2==2 && hora1==5){ // ajuste para 24 horas
 		hora1=0;
-		hora2=2;
+		hora2=0;
 	}
 
     TIM11->SR &=~0x01;

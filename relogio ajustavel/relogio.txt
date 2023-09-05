@@ -157,6 +157,10 @@ int main(void){
 	 		 if(hora2>2)
 	 			 hora2=0;
 	 	 }
+		 if(hora2==2 && hora1==5){ // ajuste para 24 horas
+			hora1=0;
+			hora2=0;
+		 }
 
 	 	 while((TIM9->SR &=0x01)==0){};
 	 }

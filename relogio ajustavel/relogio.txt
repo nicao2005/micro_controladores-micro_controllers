@@ -8,7 +8,7 @@ int hora[3]={0xC0, 0xF9, 0xA4};
 int min[6]={0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92};
 
 int min1=0, min2=0, hora1=0, hora2=0;
-int controle=0, minutos=0;
+int controle=0, segundos=0;
 int soltoumin=0, soltouhora=0;
 
 
